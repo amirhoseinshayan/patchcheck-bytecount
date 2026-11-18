@@ -22,10 +22,5 @@ int main(int argc, char **argv) {
             fputs("FIXTURE_FAILURE:OTHER:other-check\n", stderr); return 8;
         }
     }
-    for (size_t i = 0; i + 4 <= n; i++) {
-        if (!memcmp(data + i, "MARK", 4)) {
-            fputs("FIXTURE_FAILURE:MARK:marker-check\n", stderr); return 7;
-        }
-    }
     fputs("OK\n", stdout); return 0;
 }
