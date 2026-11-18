@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0",
+  "target": "bytecount",
+  "fixture": true,
+  "source": {
+    "repo": "..",
+    "base": "main",
+    "candidate": "main"
+  },
+  "builds": {
+    "release": {
+      "compiler": "gcc",
+      "flags": [
+        "-Wall",
+        "-Wextra",
+        "-fstack-protector-strong",
+        "-fPIE",
+        "-pie",
+        "-Wl,-z,relro,-z,now",
+        "-O2"
+      ],
+      "command": [
+        "{compiler}",
+        "{flags}",
+        "src/main.c",
+        "-o",
+        "program"
+      ],
+      "binary": "program"
+    },
+    "sanitized": {
+      "compiler": "gcc",
+      "flags": [
+        "-Wall",
+        "-Wextra",
+        "-fstack-protector-strong",
+        "-fPIE",
+        "-pie",
+        "-Wl,-z,relro,-z,now",
+        "-O1",
+        "-g",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address,undefined"
+      ],
+      "command": [
+        "{compiler}",
+        "{flags}",
+        "src/main.c",
+        "-o",
+        "program"
+      ],
+      "binary": "program",
+      "instrumentation": [
+        "__asan_init"
+      ]
+    }
+  },
+  "input": {
+    "mode": "stdin",
+    "argv": [
+      "{binary}",
+      "stdin"
+    ],
+    "cwd": "."
+  },
+  "environment": {
+    "image": "patchcheck-framework:1.0",
+    "variables": {
+      "ASAN_OPTIONS": "detect_leaks=0:abort_on_error=1:symbolize=1",
+      "UBSAN_OPTIONS": "print_stacktrace=1:halt_on_error=1"
+    }
+  },
+  "tools": {
+    "gcc": "gcc .*",
+    "g++": "g\\+\\+ .*",
+    "readelf": "GNU readelf .*",
+    "git": "git version .*",
+    "python3": "Python 3\\..*"
+  },
+  "limits": {
+    "wall_seconds": 3,
+    "cpu_seconds": 2,
+    "memory_mb": 384,
+    "pids": 32,
+    "output_bytes": 1048576,
+    "file_bytes": 16777216,
+    "build_wall_seconds": 90
+  },
+  "tests": [
+    {
+      "id": "binary",
+      "category": "valid",
+      "input": "../corpus/bytecount/inputs/binary.bin",
+      "oracle": "../oracles/bytecount/accepted.json",
+      "signature": null
+    },
+    {
+      "id": "empty",
+      "category": "boundary",
+      "input": "../corpus/bytecount/inputs/empty.bin",
+      "oracle": "../oracles/bytecount/accepted.json",
+      "signature": null
+    },
+    {
+      "id": "invalid",
+      "category": "invalid",
+      "input": "../corpus/bytecount/inputs/invalid.bin",
+      "oracle": "../oracles/bytecount/invalid.json",
+      "signature": null
+    },
+    {
+      "id": "marker",
+      "category": "original",
+      "input": "../corpus/bytecount/inputs/marker.bin",
+      "oracle": "../oracles/bytecount/accepted.json",
+      "signature": {
+        "error_type": "fixture-marker",
+        "location": "src/marker-check",
+        "key": "MARK"
+      }
+    }
+  ],
+  "corpus_dir": "../corpus/bytecount/regressions",
+  "analyzers": [
+    "fixture-marker"
+  ],
+  "minimization": {
+    "max_attempts": 100,
+    "wall_seconds": 180
+  }
+}

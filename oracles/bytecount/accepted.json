@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "provenance": {
+    "source": "oracles/bytecount/SPEC.md#accepted",
+    "independent": true
+  },
+  "exit_code": 0,
+  "stdout": {
+    "mode": "exact",
+    "base64": "T0sK"
+  },
+  "stderr": {
+    "mode": "exact",
+    "base64": ""
+  }
+}
